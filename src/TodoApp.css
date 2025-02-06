@@ -26,10 +26,11 @@ body {
 	font-weight: bold;
 	margin-bottom: 24px;
 	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+	text-align: center;
 }
 
 .card {
-	width: 100%;
+	width: 90%;
 	max-width: 500px;
 	padding: 20px;
 	border-radius: 16px;
@@ -44,7 +45,9 @@ body {
 
 .input-group {
 	display: flex;
+	flex-direction: row;
 	margin-bottom: 16px;
+	gap: 8px;
 }
 
 .task-input {
@@ -52,7 +55,6 @@ body {
 	padding: 10px;
 	border: 2px solid #2563eb;
 	border-radius: 12px;
-	margin-right: 8px;
 	font-size: 1rem;
 }
 
@@ -121,4 +123,27 @@ body {
 .delete-button:hover {
 	background-color: #dc2626;
 	transform: scale(1.1);
+}
+
+@media (max-width: 600px) {
+	.app-title {
+		font-size: 2rem;
+	}
+
+	.card {
+		padding: 15px;
+	}
+
+	.input-group {
+		flex-direction: column;
+	}
+
+	.task-input {
+		width: 100%;
+		margin-bottom: 8px;
+	}
+
+	.add-button {
+		width: 100%;
+	}
 }

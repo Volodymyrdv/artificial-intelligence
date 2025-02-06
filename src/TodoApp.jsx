@@ -7,47 +7,48 @@ const TodoApp = () => {
 	const [tasks, setTasks] = useState([]);
 	const [newTask, setNewTask] = useState('');
 
-	const API_URL = 'https://api.jsonbin.io/v3/b/6799767de41b4d34e4805b21';
+	const API_URL = 'http://localhost:5000/tasks';
 
 	useEffect(() => {
 		axios
 			.get(API_URL)
-			.then((response) => setTasks(response.data.record.tasks || []))
+			.then((response) => {
+				setTasks(response.data.tasks);
+			})
 			.catch((error) => console.error('Error fetching tasks:', error));
 	}, []);
 
+	const updateTasks = (updatedTasks) => {
+		axios
+			.put(API_URL, { tasks: updatedTasks })
+			.then(() => setTasks(updatedTasks))
+			.catch((error) => console.error('Error updating tasks:', error));
+	};
+
 	const addTask = () => {
 		if (newTask.trim()) {
-			const task = { id: Date.now(), title: newTask, completed: false };
-			const updatedTasks = [...tasks, task].sort((a, b) => b.completed - a.completed);
-
+			const task = { title: newTask };
 			axios
-				.put(API_URL, { record: { tasks: updatedTasks } })
-				.then(() => {
-					setTasks(updatedTasks);
+				.post(API_URL, task)
+				.then((response) => {
+					setTasks((prevTasks) => [...prevTasks, response.data]);
 					setNewTask('');
 				})
-				.catch((error) => console.error('Error updating tasks:', error));
+				.catch((error) => console.error('Error adding task:', error));
 		}
 	};
 
 	const toggleTaskCompletion = (id) => {
 		const updatedTasks = tasks.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t));
-		const sortedTasks = [...updatedTasks].sort((a, b) => b.completed - a.completed);
-
-		axios
-			.put(API_URL, { record: { tasks: sortedTasks } })
-			.then(() => setTasks(sortedTasks))
-			.catch((error) => console.error('Error updating task:', error));
+		updateTasks(updatedTasks);
 	};
 
 	const deleteTask = (id) => {
-		const updatedTasks = tasks.filter((t) => t.id !== id);
-		const sortedTasks = [...updatedTasks].sort((a, b) => b.completed - a.completed);
-
 		axios
-			.put(API_URL, { record: { tasks: sortedTasks } })
-			.then(() => setTasks(sortedTasks))
+			.delete(`${API_URL}/${id}`)
+			.then(() => {
+				setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
+			})
 			.catch((error) => console.error('Error deleting task:', error));
 	};
 
